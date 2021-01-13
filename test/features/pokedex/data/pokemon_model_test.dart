@@ -1,5 +1,5 @@
 import 'package:FlutterDex/features/pokedex/data/models/pokemon_model.dart';
-import 'package:FlutterDex/features/pokedex/domain/entities/Pokemon.dart';
+import 'package:FlutterDex/features/pokedex/domain/entities/pokemon.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'dart:convert';
 

@@ -1,5 +1,5 @@
 import 'package:FlutterDex/core/error/failures.dart';
-import 'package:FlutterDex/features/pokedex/domain/entities/Pokemon.dart';
+import 'package:FlutterDex/features/pokedex/domain/entities/pokemon.dart';
 import 'package:dartz/dartz.dart';
 
 abstract class PokemonRepository {

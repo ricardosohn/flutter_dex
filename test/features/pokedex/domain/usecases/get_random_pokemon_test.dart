@@ -1,5 +1,5 @@
 import 'package:FlutterDex/core/usecases/usecase.dart';
-import 'package:FlutterDex/features/pokedex/domain/entities/Pokemon.dart';
+import 'package:FlutterDex/features/pokedex/domain/entities/pokemon.dart';
 import 'package:FlutterDex/features/pokedex/domain/repositories/pokemon_repository.dart';
 import 'package:FlutterDex/features/pokedex/domain/usecases/get_random_pokemon.dart';
 import 'package:dartz/dartz.dart';
