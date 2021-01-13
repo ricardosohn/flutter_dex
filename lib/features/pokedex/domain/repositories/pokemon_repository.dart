@@ -5,5 +5,7 @@ import 'package:dartz/dartz.dart';
 abstract class PokemonRepository {
   Future<Either<Failure, Pokemon>> getPokemon(String name);
   Future<Either<Failure, Pokemon>> getRandomPokemon();
-  Future<Either<Failure, List<Pokemon>>> getAllPokemonData();
+
+  //TBD: The remote API does not provide a ready-to-use method to do this
+  // Future<Either<Failure, List<Pokemon>>> getAllPokemonData();
 }
