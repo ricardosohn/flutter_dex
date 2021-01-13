@@ -25,7 +25,7 @@ void main() {
     when(mockPokemonRepository.getPokemon(any))
         .thenAnswer((_) async => Right(pData));
     //act
-    final result = await usecase(pokemonName: pName);
+    final result = await usecase(Params(pokemonName: pName));
     //assert
     expect(result, Right(pData));
     verify(mockPokemonRepository.getPokemon(pName));
