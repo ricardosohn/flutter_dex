@@ -12,7 +12,18 @@ class PokemonModel extends Pokemon {
       @required Map<String, dynamic> sprites,
       @required List stats,
       @required List types,
-      @required double weight});
+      @required double weight})
+      : super(
+            abilities: abilities,
+            baseExperience: baseExperience,
+            height: height,
+            id: id,
+            name: name,
+            order: order,
+            sprites: sprites,
+            stats: stats,
+            types: types,
+            weight: weight);
 
   factory PokemonModel.fromJson(Map<String, dynamic> json) {
     return PokemonModel(
