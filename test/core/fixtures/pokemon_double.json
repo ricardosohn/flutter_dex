@@ -3,7 +3,7 @@
   "base_experience": 101,
   "forms": [],
   "game_indices": [],
-  "height": 10,
+  "height": 10.0,
   "held_items": [],
   "id": 1,
   "is_default": true,
@@ -15,5 +15,5 @@
   "sprites": {},
   "stats": [],
   "types": [],
-  "weight": 40
+  "weight": 40.0
 }

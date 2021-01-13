@@ -1,6 +1,9 @@
 import 'package:FlutterDex/features/pokedex/data/models/pokemon_model.dart';
 import 'package:FlutterDex/features/pokedex/domain/entities/Pokemon.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'dart:convert';
+
+import '../../../core/fixtures/fixtures_reader.dart';
 
 void main() {
   final tPokemonModel = PokemonModel(
@@ -18,5 +21,27 @@ void main() {
   test('should be a subclass of Pokemon entity', () async {
     //assert
     expect(tPokemonModel, isA<Pokemon>());
+  });
+
+  group('fromJSON', () {
+    test('should return a valid model when the height and weight are integers',
+        () async {
+      //arrange
+      final Map<String, dynamic> jsonMap = json.decode(fixture('pokemon.json'));
+      //act
+      final result = PokemonModel.fromJson(jsonMap);
+      //assert
+      expect(result, equals(tPokemonModel));
+    });
+    test('should return a valid model when the height and weight are double',
+        () async {
+      //arrange
+      final Map<String, dynamic> jsonMap =
+          json.decode(fixture('pokemon_double.json'));
+      //act
+      final result = PokemonModel.fromJson(jsonMap);
+      //assert
+      expect(result, equals(tPokemonModel));
+    });
   });
 }
