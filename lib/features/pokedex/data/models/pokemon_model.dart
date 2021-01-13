@@ -5,27 +5,27 @@ class PokemonModel extends Pokemon {
   PokemonModel(
       {@required List abilities,
       @required int baseExperience,
-      @required num height,
+      @required double height,
       @required int id,
       @required String name,
       @required int order,
       @required Map<String, dynamic> sprites,
       @required List stats,
       @required List types,
-      @required num weight});
+      @required double weight});
 
   factory PokemonModel.fromJson(Map<String, dynamic> json) {
     return PokemonModel(
         abilities: json['abilities'] as List,
-        baseExperience: json['base_experience'] as num,
-        height: json['height'] as num,
-        id: json['id'] as num,
+        baseExperience: (json['base_experience'] as num).toInt(),
+        height: (json['height'] as num).toDouble(),
+        id: json['id'] as int,
         name: json['name'] as String,
-        order: json['order'] as num,
+        order: json['order'] as int,
         sprites: json['sprites'] as Map<String, dynamic>,
         stats: json['stats'] as List,
         types: json['types'] as List,
-        weight: json['weight'] as num);
+        weight: (json['weight'] as num).toDouble());
   }
 
   Map<String, dynamic> toJson() => {

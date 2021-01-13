@@ -4,14 +4,14 @@ import 'package:meta/meta.dart';
 class Pokemon extends Equatable {
   final List abilities;
   final int baseExperience;
-  final num height;
+  final double height;
   final int id;
   final String name;
   final int order;
   final Map<String, dynamic> sprites;
   final List stats;
   final List types;
-  final num weight;
+  final double weight;
 
   Pokemon(
       {@required this.abilities,
