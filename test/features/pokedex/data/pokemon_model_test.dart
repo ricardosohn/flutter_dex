@@ -31,7 +31,7 @@ void main() {
       //act
       final result = PokemonModel.fromJson(jsonMap);
       //assert
-      expect(result, equals(tPokemonModel));
+      expect(result, tPokemonModel);
     });
     test('should return a valid model when the height and weight are double',
         () async {
@@ -41,7 +41,28 @@ void main() {
       //act
       final result = PokemonModel.fromJson(jsonMap);
       //assert
-      expect(result, equals(tPokemonModel));
+      expect(result, tPokemonModel);
+    });
+  });
+
+  group('toJSON', () {
+    test('should return a JSON map containing the proper data', () async {
+      //act
+      final result = tPokemonModel.toJson();
+      //assert
+      final expectedMap = {
+        "abilities": [],
+        "base_experience": 101,
+        "height": 10,
+        "order": 11,
+        "id": 1,
+        "name": "Test",
+        "sprites": {},
+        "stats": [],
+        "types": [],
+        "weight": 40
+      };
+      expect(result, expectedMap);
     });
   });
 }
