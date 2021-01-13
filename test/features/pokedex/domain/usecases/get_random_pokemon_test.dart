@@ -1,5 +1,7 @@
+import 'package:FlutterDex/core/usecases/usecase.dart';
 import 'package:FlutterDex/features/pokedex/domain/entities/Pokemon.dart';
 import 'package:FlutterDex/features/pokedex/domain/repositories/pokemon_repository.dart';
+import 'package:FlutterDex/features/pokedex/domain/usecases/get_random_pokemon.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -22,9 +24,10 @@ void main() {
     when(mockPokemonRepository.getRandomPokemon())
         .thenAnswer((_) async => Right(pData));
     //act
-    final result = await usecase();
+    final result = await usecase(NoParams());
     //assert
     expect(result, Right(pData));
+    verify(mockPokemonRepository.getRandomPokemon());
     verifyNoMoreInteractions(mockPokemonRepository);
   });
 }
