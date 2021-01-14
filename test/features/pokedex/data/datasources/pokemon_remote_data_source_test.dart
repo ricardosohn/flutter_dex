@@ -160,7 +160,6 @@ void main() {
         stats: [],
         types: [],
         weight: 40);
-    final Pokemon tPokemon = tPokemonModel;
     test('should test if the device is online', () async {
       //arrange
       when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
