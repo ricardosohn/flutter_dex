@@ -32,6 +32,26 @@ void main() {
         networkInfo: mockNetworkInfo);
   });
 
+  void runTestsOnline(Function body) {
+    group('device is online', () {
+      setUp(() {
+        when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
+      });
+
+      body();
+    });
+  }
+
+  void runTestsOffline(Function body) {
+    group('device is offline', () {
+      setUp(() {
+        when(mockNetworkInfo.isConnected).thenAnswer((_) async => false);
+      });
+
+      body();
+    });
+  }
+
   group('getPokemon', () {
     final tName = "Test";
     final tPokemonModel = PokemonModel(
@@ -55,11 +75,7 @@ void main() {
       verify(mockNetworkInfo.isConnected);
     });
 
-    group('device is online', () {
-      setUp(() {
-        when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
-      });
-
+    runTestsOnline(() {
       test(
           'should return remote data when the call to remote data source is successfull',
           () async {
@@ -99,7 +115,7 @@ void main() {
       });
     });
 
-    group('device is offline', () {
+    runTestsOffline(() {
       setUp(() {
         when(mockNetworkInfo.isConnected).thenAnswer((_) async => false);
       });
