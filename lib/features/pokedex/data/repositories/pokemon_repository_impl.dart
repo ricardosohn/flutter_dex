@@ -9,6 +9,8 @@ import '../../domain/repositories/pokemon_repository.dart';
 import '../datasources/pokemon_local_data_source.dart';
 import '../datasources/pokemon_remote_data_source.dart';
 
+typedef Future<Pokemon> _WithParamOrRandomChooser();
+
 class PokemonRepositoryImpl implements PokemonRepository {
   final PokemonRemoteDataSource remoteDataSource;
   final PokemonLocalDataSource localDataSource;
@@ -21,9 +23,23 @@ class PokemonRepositoryImpl implements PokemonRepository {
 
   @override
   Future<Either<Failure, Pokemon>> getPokemon(String name) async {
+    return await _getPokemon(() {
+      return remoteDataSource.getPokemon(name);
+    });
+  }
+
+  @override
+  Future<Either<Failure, Pokemon>> getRandomPokemon() async {
+    return await _getPokemon(() {
+      return remoteDataSource.getRandomPokemon();
+    });
+  }
+
+  Future<Either<Failure, Pokemon>> _getPokemon(
+      _WithParamOrRandomChooser getWithParamOrRandom) async {
     if (await networkInfo.isConnected) {
       try {
-        final remotePokemon = await remoteDataSource.getPokemon(name);
+        final remotePokemon = await getWithParamOrRandom();
         localDataSource.cachePokemon(remotePokemon);
         return Right(remotePokemon);
       } on ServerException {
@@ -37,11 +53,5 @@ class PokemonRepositoryImpl implements PokemonRepository {
         return Left(CacheFailure());
       }
     }
-  }
-
-  @override
-  Future<Either<Failure, Pokemon>> getRandomPokemon() {
-    // TODO: implement getRandomPokemon
-    throw UnimplementedError();
   }
 }

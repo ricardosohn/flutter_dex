@@ -147,4 +147,68 @@ void main() {
       });
     });
   });
+
+  group('getRandomPokemon', () {
+    final tPokemonModel = PokemonModel(
+        abilities: [],
+        baseExperience: 101,
+        height: 10,
+        id: 1,
+        name: "Test",
+        order: 11,
+        sprites: {},
+        stats: [],
+        types: [],
+        weight: 40);
+    final Pokemon tPokemon = tPokemonModel;
+    test('should test if the device is online', () async {
+      //arrange
+      when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
+      //act
+      repository.getRandomPokemon();
+      //assert
+      verify(mockNetworkInfo.isConnected);
+    });
+
+    runTestsOnline(() {
+      test(
+          'should return remote data when the call to remote data source is successfull',
+          () async {
+        //arrange
+        when(mockRemoteDataSource.getRandomPokemon())
+            .thenAnswer((_) async => tPokemonModel);
+        //act
+        final result = await repository.getRandomPokemon();
+        //assert
+        verify(mockRemoteDataSource.getRandomPokemon());
+        expect(result, equals(Right(tPokemonModel)));
+      });
+
+      test(
+          'should cache the data locally when the call to remote data source is successfull',
+          () async {
+        //arrange
+        when(mockRemoteDataSource.getRandomPokemon())
+            .thenAnswer((_) async => tPokemonModel);
+        //act
+        await repository.getRandomPokemon();
+        //assert
+        verify(mockRemoteDataSource.getRandomPokemon());
+        verify(mockLocalDataSource.cachePokemon(tPokemonModel));
+      });
+      test(
+          'should return server failure when the call to remote data source is unsuccessfull',
+          () async {
+        //arrange
+        when(mockRemoteDataSource.getRandomPokemon())
+            .thenThrow(ServerException());
+        //act
+        final result = await repository.getRandomPokemon();
+        //assert
+        verify(mockRemoteDataSource.getRandomPokemon());
+        verifyZeroInteractions(mockLocalDataSource);
+        expect(result, equals(Left(ServerFailure())));
+      });
+    });
+  });
 }
