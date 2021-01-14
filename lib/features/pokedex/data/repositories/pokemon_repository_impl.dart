@@ -3,7 +3,7 @@ import 'package:meta/meta.dart';
 
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
-import '../../../../core/platform/network_info.dart';
+import '../../../../core/network/network_info.dart';
 import '../../domain/entities/pokemon.dart';
 import '../../domain/repositories/pokemon_repository.dart';
 import '../datasources/pokemon_local_data_source.dart';

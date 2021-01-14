@@ -1,6 +1,6 @@
 import 'package:FlutterDex/core/error/exceptions.dart';
 import 'package:FlutterDex/core/error/failures.dart';
-import 'package:FlutterDex/core/platform/network_info.dart';
+import 'package:FlutterDex/core/network/network_info.dart';
 import 'package:FlutterDex/features/pokedex/data/datasources/pokemon_local_data_source.dart';
 import 'package:FlutterDex/features/pokedex/data/datasources/pokemon_remote_data_source.dart';
 import 'package:FlutterDex/features/pokedex/data/models/pokemon_model.dart';
