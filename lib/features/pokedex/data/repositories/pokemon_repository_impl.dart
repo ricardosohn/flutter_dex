@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dartz/dartz.dart';
 import 'package:meta/meta.dart';
 
@@ -10,15 +12,18 @@ import '../datasources/pokemon_local_data_source.dart';
 import '../datasources/pokemon_remote_data_source.dart';
 
 typedef Future<Pokemon> _WithParamOrRandomChooser();
+const LAST_POKEMON_ID = 898;
 
 class PokemonRepositoryImpl implements PokemonRepository {
   final PokemonRemoteDataSource remoteDataSource;
   final PokemonLocalDataSource localDataSource;
+  final Random random;
   final NetworkInfo networkInfo;
 
   PokemonRepositoryImpl(
       {@required this.remoteDataSource,
       @required this.localDataSource,
+      @required this.random,
       @required this.networkInfo});
 
   @override
@@ -30,8 +35,9 @@ class PokemonRepositoryImpl implements PokemonRepository {
 
   @override
   Future<Either<Failure, Pokemon>> getRandomPokemon() async {
+    int randomId = random.nextInt(LAST_POKEMON_ID) + 1;
     return await _getPokemon(() {
-      return remoteDataSource.getRandomPokemon();
+      return remoteDataSource.getPokemonById(randomId);
     });
   }
 
