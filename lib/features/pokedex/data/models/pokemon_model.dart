@@ -1,4 +1,5 @@
 import 'package:meta/meta.dart';
+
 import '../../domain/entities/pokemon.dart';
 
 class PokemonModel extends Pokemon {

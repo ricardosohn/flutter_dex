@@ -1,6 +1,7 @@
-import 'package:FlutterDex/core/error/failures.dart';
-import 'package:FlutterDex/features/pokedex/domain/entities/pokemon.dart';
 import 'package:dartz/dartz.dart';
+
+import '../../../../core/error/failures.dart';
+import '../entities/pokemon.dart';
 
 abstract class PokemonRepository {
   Future<Either<Failure, Pokemon>> getPokemon(String name);

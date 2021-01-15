@@ -1,10 +1,10 @@
-import 'package:FlutterDex/core/usecases/usecase.dart';
-import 'package:FlutterDex/features/pokedex/domain/entities/pokemon.dart';
-import 'package:FlutterDex/features/pokedex/domain/repositories/pokemon_repository.dart';
-import 'package:FlutterDex/core/error/failures.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
+import '../../../../core/usecases/usecase.dart';
+import '../entities/pokemon.dart';
+import '../repositories/pokemon_repository.dart';
+import '../../../../core/error/failures.dart';
 
 class GetPokemon implements Usecase<Pokemon, Params> {
   final PokemonRepository repository;
