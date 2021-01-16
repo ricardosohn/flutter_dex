@@ -1,10 +1,11 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
+
+import '../../../../core/error/failures.dart';
 import '../../../../core/usecases/usecase.dart';
 import '../entities/pokemon.dart';
 import '../repositories/pokemon_repository.dart';
-import '../../../../core/error/failures.dart';
 
 class GetPokemon implements Usecase<Pokemon, Params> {
   final PokemonRepository repository;
