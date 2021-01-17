@@ -42,6 +42,8 @@ void main() {
         throwsA(isAssertionError),
       );
     });
+    pokedexBloc.close();
+
     test('throws AssertionError if getRandomPokemon usecase is null', () {
       expect(
         () => PokedexBloc(

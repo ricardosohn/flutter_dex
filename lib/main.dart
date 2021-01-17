@@ -1,17 +1,19 @@
-import 'package:FlutterDex/injection_container.dart' as di;
 import 'package:flutter/material.dart';
 
+import 'features/pokedex/presentation/pages/pokedex_page.dart';
+import 'injection_container.dart' as di;
+
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await di.init();
-  runApp(MyApp());
+  runApp(PokedexApp());
 }
 
-class MyApp extends StatelessWidget {
+class PokedexApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Clean Architecture + TDD',
-      home: Container(),
+      home: PokedexPage(),
     );
   }
 }
