@@ -15,7 +15,7 @@ void main() {
       //arrange
       final tStr = 'Charmander';
       //act
-      final result = inputConverter.isStringValid(tStr);
+      final result = inputConverter.validateString(tStr);
       //assert
       expect(result, Right(tStr));
     });
@@ -27,7 +27,7 @@ void main() {
       //arrange
       final tStr = 'Charmander1!#1a';
       //act
-      final result = inputConverter.isStringValid(tStr);
+      final result = inputConverter.validateString(tStr);
       //assert
       expect(result, Left(InputConverterFailure()));
     });
