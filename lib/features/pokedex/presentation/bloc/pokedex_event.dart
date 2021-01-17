@@ -7,10 +7,10 @@ abstract class PokedexEvent extends Equatable {
   List<Object> get props => props;
 }
 
-class GetPokemon extends PokedexEvent {
+class GetPokemonEvent extends PokedexEvent {
   final String name;
 
-  GetPokemon(this.name) : super([name]);
+  GetPokemonEvent(this.name) : super([name]);
 }
 
-class GetRandomPokemon extends PokedexEvent {}
+class GetRandomPokemonEvent extends PokedexEvent {}
