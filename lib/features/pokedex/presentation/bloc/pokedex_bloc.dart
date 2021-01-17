@@ -4,6 +4,7 @@ import 'package:FlutterDex/core/error/failures.dart';
 import 'package:FlutterDex/core/usecases/usecase.dart';
 import 'package:FlutterDex/core/util/input_converter.dart';
 import 'package:bloc/bloc.dart';
+import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
@@ -41,24 +42,35 @@ class PokedexBloc extends Bloc<PokedexEvent, PokedexState> {
     PokedexEvent event,
   ) async* {
     if (event is GetPokemonEvent) {
-      final inputEither = inputConverter.validateString(event.name);
-      yield* inputEither.fold((failure) async* {
-        yield Error(message: INVALID_INPUT_FAILURE_MESSAGE);
-      }, (pokemonName) async* {
-        yield Loading();
-        final failureOrPokemon =
-            await getPokemon(Params(pokemonName: pokemonName));
-        yield failureOrPokemon.fold(
-            (failure) => Error(message: _mapFailureToMessage(failure)),
-            (pokemon) => Loaded(pokemon: pokemon));
-      });
+      yield* _handleGetPokemonEvent(event);
     } else if (event is GetRandomPokemonEvent) {
-      yield Loading();
-      final failureOrPokemon = await getRandomPokemon(NoParams());
-      yield failureOrPokemon.fold(
-          (failure) => Error(message: _mapFailureToMessage(failure)),
-          (pokemon) => Loaded(pokemon: pokemon));
+      yield* _handleGetRandomPokemonEvent(event);
     }
+  }
+
+  Stream<PokedexState> _handleGetPokemonEvent(event) async* {
+    final inputEither = inputConverter.validateString(event.name);
+    yield* inputEither.fold((failure) async* {
+      yield Error(message: INVALID_INPUT_FAILURE_MESSAGE);
+    }, (pokemonName) async* {
+      yield Loading();
+      final failureOrPokemon =
+          await getPokemon(Params(pokemonName: pokemonName));
+      yield* _eitherLoadedOrErrorState(failureOrPokemon);
+    });
+  }
+
+  Stream<PokedexState> _handleGetRandomPokemonEvent(event) async* {
+    yield Loading();
+    final failureOrPokemon = await getRandomPokemon(NoParams());
+    yield* _eitherLoadedOrErrorState(failureOrPokemon);
+  }
+
+  Stream<PokedexState> _eitherLoadedOrErrorState(
+      Either<Failure, Pokemon> failureOrPokemon) async* {
+    yield failureOrPokemon.fold(
+        (failure) => Error(message: _mapFailureToMessage(failure)),
+        (pokemon) => Loaded(pokemon: pokemon));
   }
 
   String _mapFailureToMessage(Failure failure) {
