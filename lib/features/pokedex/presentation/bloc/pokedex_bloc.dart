@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:FlutterDex/core/error/failures.dart';
+import 'package:FlutterDex/core/usecases/usecase.dart';
 import 'package:FlutterDex/core/util/input_converter.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -51,6 +52,12 @@ class PokedexBloc extends Bloc<PokedexEvent, PokedexState> {
             (failure) => Error(message: _mapFailureToMessage(failure)),
             (pokemon) => Loaded(pokemon: pokemon));
       });
+    } else if (event is GetRandomPokemonEvent) {
+      yield Loading();
+      final failureOrPokemon = await getRandomPokemon(NoParams());
+      yield failureOrPokemon.fold(
+          (failure) => Error(message: _mapFailureToMessage(failure)),
+          (pokemon) => Loaded(pokemon: pokemon));
     }
   }
 

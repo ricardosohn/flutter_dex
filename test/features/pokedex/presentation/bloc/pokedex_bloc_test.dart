@@ -1,4 +1,5 @@
 import 'package:FlutterDex/core/error/failures.dart';
+import 'package:FlutterDex/core/usecases/usecase.dart';
 import 'package:FlutterDex/core/util/input_converter.dart';
 import 'package:FlutterDex/features/pokedex/domain/entities/pokemon.dart';
 import 'package:FlutterDex/features/pokedex/domain/usecases/get_pokemon.dart';
@@ -150,6 +151,65 @@ void main() {
           return buildPokedexBloc();
         },
         act: (bloc) => bloc.add(GetPokemonEvent(tName)),
+        expect: [Loading(), Error(message: CACHE_FAILURE_MESSAGE)]);
+  });
+
+  group('getRandomPokemon', () {
+    final tPokemon = Pokemon(
+        abilities: [],
+        id: 1,
+        baseExperience: 100,
+        height: 100,
+        order: 130,
+        weight: 130,
+        stats: [],
+        name: "Test",
+        types: [],
+        sprites: {});
+
+    PokedexBloc buildPokedexBloc() => PokedexBloc(
+        getPokemon: mockGetPokemon,
+        getRandomPokemon: mockGetRandomPokemon,
+        inputConverter: mockInputConverter);
+    blocTest('should get data from the getRandomPokemon usecase',
+        build: () {
+          when(mockGetRandomPokemon(any))
+              .thenAnswer((_) async => Right(tPokemon));
+          return buildPokedexBloc();
+        },
+        act: (bloc) => bloc.add(GetRandomPokemonEvent()),
+        verify: (_) {
+          mockGetRandomPokemon(NoParams());
+        });
+
+    blocTest(
+        'should emit [Loading] and [Loaded] when data is gotten successfully',
+        build: () {
+          when(mockGetRandomPokemon(any))
+              .thenAnswer((_) async => Right(tPokemon));
+          return buildPokedexBloc();
+        },
+        act: (bloc) => bloc.add(GetRandomPokemonEvent()),
+        expect: [Loading(), Loaded(pokemon: tPokemon)]);
+
+    blocTest('should emit [Loading] and [Error] when data fails',
+        build: () {
+          when(mockGetRandomPokemon(any))
+              .thenAnswer((_) async => Left(ServerFailure()));
+          return buildPokedexBloc();
+        },
+        act: (bloc) => bloc.add(GetRandomPokemonEvent()),
+        expect: [Loading(), Error(message: SERVER_FAILURE_MESSAGE)]);
+
+    blocTest(
+        '''should emit [Loading] and [Error] with a proper message for the 
+        error when getting data fails''',
+        build: () {
+          when(mockGetRandomPokemon(any))
+              .thenAnswer((_) async => Left(CacheFailure()));
+          return buildPokedexBloc();
+        },
+        act: (bloc) => bloc.add(GetRandomPokemonEvent()),
         expect: [Loading(), Error(message: CACHE_FAILURE_MESSAGE)]);
   });
 }
