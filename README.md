@@ -8,4 +8,4 @@ FlutterDex is a Pokedex App implemented in Flutter. The goal of this project is 
 Simply run `flutter run` from within the project folder.
 
 ### Contributions
-Thanks @ResoCoder for the amazing tutorial on [TDD + Clean Architecture for Flutter](https://resocoder.com/flutter-clean-architecture-tdd/).
+Thanks [ResoCoder](https://github.com/ResoCoder) for the amazing tutorial on [TDD + Clean Architecture for Flutter](https://resocoder.com/flutter-clean-architecture-tdd/).
