@@ -1,16 +1,11 @@
-# flutter_dex
+## FlutterDex
+FlutterDex is a Pokedex App implemented in Flutter. The goal of this project is to learn and deploy an application using Test Driven Development (TDD) and Clean Architecture ([as proposed by Uncle Bob](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)).
 
-A new Flutter project.
+### Architecture Proposal
+![App architecture proposed in the ResoCoder tutorial](/images/architecture-proposal.png)
 
-## Getting Started
+### Running
+Simply run `flutter run` from within the project folder.
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Contributions
+Thanks @ResoCoder for the amazing tutorial on [TDD + Clean Architecture for Flutter](https://resocoder.com/flutter-clean-architecture-tdd/).
