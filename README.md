@@ -8,6 +8,11 @@ I'm still planning the UI, but after that some more features are going to be imp
 ### Architecture Proposal
 ![App architecture proposed in the ResoCoder tutorial](/images/architecture-proposal.jpg)
 
+### UI Prototypes
+Disclaimer: I don't know what I'm doing. This was the first time using Adobe XD to do anything.
+This is what I've come up with so far:
+![App Screens made on Adobe XD](/images/prototypes.png)
+
 ### Running
 Simply run `flutter run` from within the project folder.
 
