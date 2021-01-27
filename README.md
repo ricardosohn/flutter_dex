@@ -3,7 +3,7 @@ FlutterDex is a Pokedex App implemented in Flutter. The goal of this project is 
 
 ### Disclaimer
 This is still a work-in-progress and anything is subject to change anytime.
-I'm still planning the UI, but after that some more features are going to be implemented.
+I'm (almost) done with the UI, but I will need to make some changes to the application in order for it to work as my drawings intend.
 
 ### Architecture Proposal
 ![App architecture proposed in the ResoCoder tutorial](/images/architecture-proposal.jpg)
