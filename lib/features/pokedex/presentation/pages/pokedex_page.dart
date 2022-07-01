@@ -54,7 +54,7 @@ class PokedexControl extends StatefulWidget {
 }
 
 class PokedexControlState extends State<PokedexControl> {
-  String inputStr;
+  String? inputStr;
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +104,7 @@ class PokedexControlState extends State<PokedexControl> {
 class MessageDisplay extends StatelessWidget {
   final String message;
 
-  const MessageDisplay({Key key, @required this.message}) : super(key: key);
+  const MessageDisplay({Key? key, required this.message}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -121,7 +121,7 @@ class MessageDisplay extends StatelessWidget {
 class PokedexEntry extends StatelessWidget {
   final Pokemon pokemon;
 
-  const PokedexEntry({Key key, @required this.pokemon}) : super(key: key);
+  const PokedexEntry({Key? key, required this.pokemon}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

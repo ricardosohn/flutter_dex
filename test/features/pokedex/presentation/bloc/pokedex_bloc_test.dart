@@ -6,9 +6,9 @@ import 'package:FlutterDex/features/pokedex/domain/usecases/get_pokemon.dart';
 import 'package:FlutterDex/features/pokedex/domain/usecases/get_random_pokemon.dart';
 import 'package:FlutterDex/features/pokedex/presentation/bloc/pokedex_bloc.dart';
 import 'package:bloc_test/bloc_test.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:dartz/dartz.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
 
 class MockGetPokemon extends Mock implements GetPokemon {}
 
@@ -17,10 +17,10 @@ class MockGetRandomPokemon extends Mock implements GetRandomPokemon {}
 class MockInputConverter extends Mock implements InputConverter {}
 
 void main() {
-  PokedexBloc pokedexBloc;
-  MockGetPokemon mockGetPokemon;
-  MockGetRandomPokemon mockGetRandomPokemon;
-  MockInputConverter mockInputConverter;
+  late PokedexBloc pokedexBloc;
+  late MockGetPokemon mockGetPokemon;
+  late MockGetRandomPokemon mockGetRandomPokemon;
+  late MockInputConverter mockInputConverter;
 
   setUp(() {
     mockGetPokemon = MockGetPokemon();
@@ -30,38 +30,6 @@ void main() {
         getPokemon: mockGetPokemon,
         getRandomPokemon: mockGetRandomPokemon,
         inputConverter: mockInputConverter);
-  });
-
-  group('Bloc parameters assertion errors', () {
-    test('throws AssertionError if getPokemon usecase is null', () {
-      expect(
-        () => PokedexBloc(
-            getPokemon: null,
-            getRandomPokemon: mockGetRandomPokemon,
-            inputConverter: mockInputConverter),
-        throwsA(isAssertionError),
-      );
-    });
-    pokedexBloc.close();
-
-    test('throws AssertionError if getRandomPokemon usecase is null', () {
-      expect(
-        () => PokedexBloc(
-            getPokemon: mockGetPokemon,
-            getRandomPokemon: null,
-            inputConverter: mockInputConverter),
-        throwsA(isAssertionError),
-      );
-    });
-    test('throws AssertionError if inputConverter is null', () {
-      expect(
-        () => PokedexBloc(
-            getPokemon: mockGetPokemon,
-            getRandomPokemon: mockGetRandomPokemon,
-            inputConverter: null),
-        throwsA(isAssertionError),
-      );
-    });
   });
 
   test('initial state should be empty', () {
@@ -88,72 +56,82 @@ void main() {
         inputConverter: mockInputConverter);
 
     void setUpMockInputConverterSuccess() =>
-        when(mockInputConverter.validateString(any)).thenReturn(Right(tName));
+        when(() => mockInputConverter.validateString(any()))
+            .thenReturn(Right(tName));
 
     void setUpMockInputConverterFailure() =>
-        when(mockInputConverter.validateString(any))
+        when(() => mockInputConverter.validateString(any()))
             .thenReturn(Left(InputConverterFailure()));
 
-    blocTest('should call the InputConverter to validate the name string',
-        build: () {
-          setUpMockInputConverterFailure();
-          return buildPokedexBloc();
-        },
-        act: (bloc) => bloc.add(GetPokemonEvent(tName)),
-        verify: (_) {
-          mockInputConverter.validateString(tName);
-        });
+    blocTest(
+      'should call the InputConverter to validate the name string',
+      build: () {
+        setUpMockInputConverterFailure();
+        return buildPokedexBloc();
+      },
+      act: (dynamic bloc) async => await bloc.add(GetPokemonEvent(tName)),
+      verify: (dynamic _) {
+        mockInputConverter.validateString(tName);
+      },
+    );
 
-    blocTest('should emit [Error] when the input is invalid',
-        build: () {
-          setUpMockInputConverterFailure();
-          return buildPokedexBloc();
-        },
-        act: (bloc) => bloc.add(GetPokemonEvent(tName)),
-        expect: [Error(message: INVALID_INPUT_FAILURE_MESSAGE)]);
+    blocTest(
+      'should emit [Error] when the input is invalid',
+      build: () {
+        setUpMockInputConverterFailure();
+        return buildPokedexBloc();
+      },
+      act: (dynamic bloc) => bloc.add(GetPokemonEvent(tName)),
+      expect: () => [Error(message: INVALID_INPUT_FAILURE_MESSAGE)],
+    );
 
     blocTest('should get data from the getPokemon usecase',
-        build: () {
+        setUp: () {
           setUpMockInputConverterSuccess();
-          when(mockGetPokemon(any)).thenAnswer((_) async => Right(tPokemon));
-          return buildPokedexBloc();
+          when(() => mockGetPokemon(Params(pokemonName: tName)))
+              .thenAnswer((_) async => Right(tPokemon));
         },
-        act: (bloc) => bloc.add(GetPokemonEvent(tName)),
-        verify: (_) {
+        build: () => buildPokedexBloc(),
+        act: (dynamic bloc) => bloc.add(GetPokemonEvent(tName)),
+        verify: (dynamic _) {
           mockGetPokemon(Params(pokemonName: tName));
         });
 
     blocTest(
         'should emit [Loading] and [Loaded] when data is gotten successfully',
-        build: () {
+        setUp: () {
           setUpMockInputConverterSuccess();
-          when(mockGetPokemon(any)).thenAnswer((_) async => Right(tPokemon));
-          return buildPokedexBloc();
+          when(() => mockGetPokemon(Params(pokemonName: tName)))
+              .thenAnswer((_) async => Right(tPokemon));
         },
-        act: (bloc) => bloc.add(GetPokemonEvent(tName)),
-        expect: [Loading(), Loaded(pokemon: tPokemon)]);
-
-    blocTest('should emit [Loading] and [Error] when data fails',
-        build: () {
-          setUpMockInputConverterSuccess();
-          when(mockGetPokemon(any))
-              .thenAnswer((_) async => Left(ServerFailure()));
-          return buildPokedexBloc();
-        },
-        act: (bloc) => bloc.add(GetPokemonEvent(tName)),
-        expect: [Loading(), Error(message: SERVER_FAILURE_MESSAGE)]);
+        build: () => buildPokedexBloc(),
+        act: (dynamic bloc) async => await bloc.add(GetPokemonEvent(tName)),
+        expect: () => [Loading(), Loaded(pokemon: tPokemon)]);
 
     blocTest(
-        '''should emit [Loading] and [Error] with a proper message for the 
+      'should emit [Loading] and [Error] when data fails',
+      setUp: () {
+        setUpMockInputConverterSuccess();
+        when(() => mockGetPokemon(Params(pokemonName: tName)))
+            .thenAnswer((_) async => Left(ServerFailure()));
+      },
+      build: () => buildPokedexBloc(),
+      act: (dynamic bloc) => bloc.add(GetPokemonEvent(tName)),
+      expect: () => [Loading(), Error(message: SERVER_FAILURE_MESSAGE)],
+    );
+
+    blocTest(
+      '''should emit [Loading] and [Error] with a proper message for the 
         error when getting data fails''',
-        build: () {
-          setUpMockInputConverterSuccess();
-          when(mockGetPokemon(any))
-              .thenAnswer((_) async => Left(CacheFailure()));
-          return buildPokedexBloc();
-        },
-        act: (bloc) => bloc.add(GetPokemonEvent(tName)),
-        expect: [Loading(), Error(message: CACHE_FAILURE_MESSAGE)]);
+      setUp: () {
+        setUpMockInputConverterSuccess();
+        when(() => mockGetPokemon(Params(pokemonName: tName)))
+            .thenAnswer((_) async => Left(CacheFailure()));
+      },
+      build: () => buildPokedexBloc(),
+      act: (dynamic bloc) => bloc.add(GetPokemonEvent(tName)),
+      expect: () => [Loading(), Error(message: CACHE_FAILURE_MESSAGE)],
+    );
   });
 
   group('getRandomPokemon', () {
@@ -174,44 +152,48 @@ void main() {
         getRandomPokemon: mockGetRandomPokemon,
         inputConverter: mockInputConverter);
     blocTest('should get data from the getRandomPokemon usecase',
-        build: () {
-          when(mockGetRandomPokemon(any))
+        setUp: () {
+          when(() => mockGetRandomPokemon(NoParams()))
               .thenAnswer((_) async => Right(tPokemon));
-          return buildPokedexBloc();
         },
-        act: (bloc) => bloc.add(GetRandomPokemonEvent()),
-        verify: (_) {
+        build: () => buildPokedexBloc(),
+        act: (dynamic bloc) => bloc.add(GetRandomPokemonEvent()),
+        verify: (dynamic _) {
           mockGetRandomPokemon(NoParams());
         });
 
     blocTest(
-        'should emit [Loading] and [Loaded] when data is gotten successfully',
-        build: () {
-          when(mockGetRandomPokemon(any))
-              .thenAnswer((_) async => Right(tPokemon));
-          return buildPokedexBloc();
-        },
-        act: (bloc) => bloc.add(GetRandomPokemonEvent()),
-        expect: [Loading(), Loaded(pokemon: tPokemon)]);
-
-    blocTest('should emit [Loading] and [Error] when data fails',
-        build: () {
-          when(mockGetRandomPokemon(any))
-              .thenAnswer((_) async => Left(ServerFailure()));
-          return buildPokedexBloc();
-        },
-        act: (bloc) => bloc.add(GetRandomPokemonEvent()),
-        expect: [Loading(), Error(message: SERVER_FAILURE_MESSAGE)]);
+      'should emit [Loading] and [Loaded] when data is gotten successfully',
+      setUp: () {
+        when(() => mockGetRandomPokemon(NoParams()))
+            .thenAnswer((_) async => Right(tPokemon));
+      },
+      build: () => buildPokedexBloc(),
+      act: (dynamic bloc) => bloc.add(GetRandomPokemonEvent()),
+      expect: () => [Loading(), Loaded(pokemon: tPokemon)],
+    );
 
     blocTest(
-        '''should emit [Loading] and [Error] with a proper message for the 
+      'should emit [Loading] and [Error] when data fails',
+      setUp: () {
+        when(() => mockGetRandomPokemon(NoParams()))
+            .thenAnswer((_) async => Left(ServerFailure()));
+      },
+      build: () => buildPokedexBloc(),
+      act: (dynamic bloc) => bloc.add(GetRandomPokemonEvent()),
+      expect: () => [Loading(), Error(message: SERVER_FAILURE_MESSAGE)],
+    );
+
+    blocTest(
+      '''should emit [Loading] and [Error] with a proper message for the 
         error when getting data fails''',
-        build: () {
-          when(mockGetRandomPokemon(any))
-              .thenAnswer((_) async => Left(CacheFailure()));
-          return buildPokedexBloc();
-        },
-        act: (bloc) => bloc.add(GetRandomPokemonEvent()),
-        expect: [Loading(), Error(message: CACHE_FAILURE_MESSAGE)]);
+      setUp: () {
+        when(() => mockGetRandomPokemon(NoParams()))
+            .thenAnswer((_) async => Left(CacheFailure()));
+      },
+      build: () => buildPokedexBloc(),
+      act: (dynamic bloc) => bloc.add(GetRandomPokemonEvent()),
+      expect: () => [Loading(), Error(message: CACHE_FAILURE_MESSAGE)],
+    );
   });
 }

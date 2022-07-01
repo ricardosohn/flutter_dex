@@ -19,13 +19,13 @@ abstract class PokemonLocalDataSource {
 const CACHED_POKEMON = 'CACHED_POKEMON';
 
 class PokemonLocalDataSourceImpl implements PokemonLocalDataSource {
-  final SharedPreferences sharedPreferences;
+  final SharedPreferences? sharedPreferences;
 
-  PokemonLocalDataSourceImpl({@required this.sharedPreferences});
+  PokemonLocalDataSourceImpl({required this.sharedPreferences});
 
   @override
   Future<PokemonModel> getLastPokemon() {
-    final jsonString = sharedPreferences.getString(CACHED_POKEMON);
+    final jsonString = sharedPreferences!.getString(CACHED_POKEMON);
     if (jsonString != null) {
       return Future.value(PokemonModel.fromJson(json.decode(jsonString)));
     } else {
@@ -35,7 +35,7 @@ class PokemonLocalDataSourceImpl implements PokemonLocalDataSource {
 
   @override
   Future<void> cachePokemon(PokemonModel pokemonModel) {
-    return sharedPreferences.setString(
+    return sharedPreferences!.setString(
         CACHED_POKEMON, json.encode(pokemonModel.toJson()));
   }
 }

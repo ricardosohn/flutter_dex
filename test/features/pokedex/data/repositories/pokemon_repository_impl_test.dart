@@ -1,4 +1,5 @@
 import 'dart:math';
+
 import 'package:FlutterDex/core/error/exceptions.dart';
 import 'package:FlutterDex/core/error/failures.dart';
 import 'package:FlutterDex/core/network/network_info.dart';
@@ -8,23 +9,25 @@ import 'package:FlutterDex/features/pokedex/data/models/pokemon_model.dart';
 import 'package:FlutterDex/features/pokedex/data/repositories/pokemon_repository_impl.dart';
 import 'package:FlutterDex/features/pokedex/domain/entities/pokemon.dart';
 import 'package:dartz/dartz.dart';
-import 'package:mockito/mockito.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
 
 class MockRemoteDataSource extends Mock implements PokemonRemoteDataSource {}
 
 class MockLocalDataSource extends Mock implements PokemonLocalDataSource {}
+
+class MockPokemonModel extends Mock implements PokemonModel {}
 
 class MockNetworkInfo extends Mock implements NetworkInfo {}
 
 class MockRandom extends Mock implements Random {}
 
 void main() {
-  PokemonRepositoryImpl repository;
-  MockRemoteDataSource mockRemoteDataSource;
-  MockLocalDataSource mockLocalDataSource;
-  MockRandom mockRandom;
-  MockNetworkInfo mockNetworkInfo;
+  late PokemonRepositoryImpl repository;
+  MockRemoteDataSource? mockRemoteDataSource;
+  MockLocalDataSource? mockLocalDataSource;
+  MockRandom? mockRandom;
+  MockNetworkInfo? mockNetworkInfo;
 
   setUp(() {
     mockRemoteDataSource = MockRemoteDataSource();
@@ -41,7 +44,7 @@ void main() {
   void runTestsOnline(Function body) {
     group('device is online', () {
       setUp(() {
-        when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
+        when(() => mockNetworkInfo!.isConnected).thenAnswer((_) async => true);
       });
 
       body();
@@ -51,7 +54,7 @@ void main() {
   void runTestsOffline(Function body) {
     group('device is offline', () {
       setUp(() {
-        when(mockNetworkInfo.isConnected).thenAnswer((_) async => false);
+        when(() => mockNetworkInfo!.isConnected).thenAnswer((_) async => false);
       });
 
       body();
@@ -59,6 +62,10 @@ void main() {
   }
 
   group('getPokemon', () {
+    setUp(() {
+      registerFallbackValue(MockPokemonModel());
+    });
+
     final tName = "Test";
     final tPokemonModel = PokemonModel(
         abilities: [],
@@ -74,11 +81,15 @@ void main() {
     final Pokemon tPokemon = tPokemonModel;
     test('should test if the device is online', () async {
       //arrange
-      when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
+      when(() => mockNetworkInfo!.isConnected).thenAnswer((_) async => true);
+      when(() => mockRemoteDataSource!.getPokemon(any()))
+          .thenAnswer((_) async => MockPokemonModel());
+      when(() => mockLocalDataSource!.cachePokemon(any()))
+          .thenAnswer((_) async {});
       //act
-      repository.getPokemon(tName);
+      await repository.getPokemon(tName);
       //assert
-      verify(mockNetworkInfo.isConnected);
+      verify(() => mockNetworkInfo!.isConnected);
     });
 
     runTestsOnline(() {
@@ -86,12 +97,14 @@ void main() {
           'should return remote data when the call to remote data source is successfull',
           () async {
         //arrange
-        when(mockRemoteDataSource.getPokemon(any))
+        when(() => mockRemoteDataSource!.getPokemon(any()))
             .thenAnswer((_) async => tPokemonModel);
+        when(() => mockLocalDataSource!.cachePokemon(tPokemonModel))
+            .thenAnswer((_) async {});
         //act
         final result = await repository.getPokemon(tName);
         //assert
-        verify(mockRemoteDataSource.getPokemon(tName));
+        verify(() => mockRemoteDataSource!.getPokemon(tName));
         expect(result, equals(Right(tPokemonModel)));
       });
 
@@ -99,23 +112,26 @@ void main() {
           'should cache the data locally when the call to remote data source is successfull',
           () async {
         //arrange
-        when(mockRemoteDataSource.getPokemon(any))
+        when(() => mockRemoteDataSource!.getPokemon(any()))
             .thenAnswer((_) async => tPokemonModel);
+        when(() => mockLocalDataSource!.cachePokemon(tPokemonModel))
+            .thenAnswer((_) async {});
         //act
         await repository.getPokemon(tName);
         //assert
-        verify(mockRemoteDataSource.getPokemon(tName));
-        verify(mockLocalDataSource.cachePokemon(tPokemonModel));
+        verify(() => mockRemoteDataSource!.getPokemon(tName));
+        verify(() => mockLocalDataSource!.cachePokemon(tPokemonModel));
       });
       test(
           'should return server failure when the call to remote data source is unsuccessfull',
           () async {
         //arrange
-        when(mockRemoteDataSource.getPokemon(any)).thenThrow(ServerException());
+        when(() => mockRemoteDataSource!.getPokemon(any()))
+            .thenThrow(ServerException());
         //act
         final result = await repository.getPokemon(tName);
         //assert
-        verify(mockRemoteDataSource.getPokemon(tName));
+        verify(() => mockRemoteDataSource!.getPokemon(tName));
         verifyZeroInteractions(mockLocalDataSource);
         expect(result, equals(Left(ServerFailure())));
       });
@@ -123,38 +139,43 @@ void main() {
 
     runTestsOffline(() {
       setUp(() {
-        when(mockNetworkInfo.isConnected).thenAnswer((_) async => false);
+        when(() => mockNetworkInfo!.isConnected).thenAnswer((_) async => false);
       });
 
       test(
           'should return last locally cached data when the cache data is present',
           () async {
         //arrange
-        when(mockLocalDataSource.getLastPokemon())
+        when(() => mockLocalDataSource!.getLastPokemon())
             .thenAnswer((_) async => tPokemonModel);
         //act
         final result = await repository.getPokemon(tName);
         //assert
         verifyZeroInteractions(mockRemoteDataSource);
-        verify(mockLocalDataSource.getLastPokemon());
+        verify(() => mockLocalDataSource!.getLastPokemon());
         expect(result, Right(tPokemon));
       });
       test(
           'should return cache CacheFailure when there is no cached data present',
           () async {
         //arrange
-        when(mockLocalDataSource.getLastPokemon()).thenThrow(CacheException());
+        when(() => mockLocalDataSource!.getLastPokemon())
+            .thenThrow(CacheException());
         //act
         final result = await repository.getPokemon(tName);
         //assert
         verifyZeroInteractions(mockRemoteDataSource);
-        verify(mockLocalDataSource.getLastPokemon());
+        verify(() => mockLocalDataSource!.getLastPokemon());
         expect(result, Left(CacheFailure()));
       });
     });
   });
 
   group('getRandomPokemon', () {
+    setUp(() {
+      registerFallbackValue(MockPokemonModel());
+    });
+
     final tRandomNumber = 131;
     final tPokemonModel = PokemonModel(
         abilities: [],
@@ -169,12 +190,16 @@ void main() {
         weight: 40);
     test('should test if the device is online', () async {
       //arrange
-      when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
-      when(mockRandom.nextInt(any)).thenReturn(tRandomNumber);
+      when(() => mockNetworkInfo!.isConnected).thenAnswer((_) async => true);
+      when(() => mockRandom!.nextInt(any())).thenReturn(tRandomNumber);
+      when(() => mockRemoteDataSource!.getPokemonById(any()))
+          .thenAnswer((_) async => MockPokemonModel());
+      when(() => mockLocalDataSource!.cachePokemon(any()))
+          .thenAnswer((_) async {});
       //act
-      repository.getRandomPokemon();
+      await repository.getRandomPokemon();
       //assert
-      verify(mockNetworkInfo.isConnected);
+      verify(() => mockNetworkInfo!.isConnected);
     });
 
     runTestsOnline(() {
@@ -182,14 +207,16 @@ void main() {
           'should return remote data when the call to remote data source is successfull',
           () async {
         //arrange
-        when(mockRandom.nextInt(any)).thenReturn(tRandomNumber);
-        when(mockRemoteDataSource.getPokemonById(tPokemonModel.id))
+        when(() => mockRandom!.nextInt(any())).thenReturn(tRandomNumber);
+        when(() => mockRemoteDataSource!.getPokemonById(tPokemonModel.id))
             .thenAnswer((_) async => tPokemonModel);
+        when(() => mockLocalDataSource!.cachePokemon(any()))
+            .thenAnswer((_) async {});
         //act
         final result = await repository.getRandomPokemon();
         //assert
-        verify(mockRandom.nextInt(any));
-        verify(mockRemoteDataSource.getPokemonById(tPokemonModel.id));
+        verify(() => mockRandom!.nextInt(any()));
+        verify(() => mockRemoteDataSource!.getPokemonById(tPokemonModel.id));
         expect(result, equals(Right(tPokemonModel)));
       });
 
@@ -197,28 +224,30 @@ void main() {
           'should cache the data locally when the call to remote data source is successfull',
           () async {
         //arrange
-        when(mockRandom.nextInt(any)).thenReturn(tRandomNumber);
-        when(mockRemoteDataSource.getPokemonById(any))
+        when(() => mockRandom!.nextInt(any())).thenReturn(tRandomNumber);
+        when(() => mockRemoteDataSource!.getPokemonById(any()))
             .thenAnswer((_) async => tPokemonModel);
+        when(() => mockLocalDataSource!.cachePokemon(any()))
+            .thenAnswer((_) async {});
         //act
         await repository.getRandomPokemon();
         //assert
-        verify(mockRandom.nextInt(any));
-        verify(mockRemoteDataSource.getPokemonById(tPokemonModel.id));
-        verify(mockLocalDataSource.cachePokemon(tPokemonModel));
+        verify(() => mockRandom!.nextInt(any()));
+        verify(() => mockRemoteDataSource!.getPokemonById(tPokemonModel.id));
+        verify(() => mockLocalDataSource!.cachePokemon(tPokemonModel));
       });
       test(
           'should return server failure when the call to remote data source is unsuccessfull',
           () async {
         //arrange
-        when(mockRandom.nextInt(any)).thenReturn(tRandomNumber);
-        when(mockRemoteDataSource.getPokemonById(tPokemonModel.id))
+        when(() => mockRandom!.nextInt(any())).thenReturn(tRandomNumber);
+        when(() => mockRemoteDataSource!.getPokemonById(tPokemonModel.id))
             .thenThrow(ServerException());
         //act
         final result = await repository.getRandomPokemon();
         //assert
-        verify(mockRandom.nextInt(any));
-        verify(mockRemoteDataSource.getPokemonById(tPokemonModel.id));
+        verify(() => mockRandom!.nextInt(any()));
+        verify(() => mockRemoteDataSource!.getPokemonById(tPokemonModel.id));
         verifyZeroInteractions(mockLocalDataSource);
         expect(result, equals(Left(ServerFailure())));
       });

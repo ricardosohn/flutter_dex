@@ -3,30 +3,33 @@ import 'dart:convert';
 import 'package:FlutterDex/core/error/exceptions.dart';
 import 'package:FlutterDex/features/pokedex/data/datasources/pokemon_remote_data_source.dart';
 import 'package:FlutterDex/features/pokedex/data/models/pokemon_model.dart';
-import 'package:mockito/mockito.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:mocktail/mocktail.dart';
 
 import '../../../../core/fixtures/fixtures_reader.dart';
-import 'package:http/http.dart' as http;
 
 class MockHttpClient extends Mock implements http.Client {}
 
+class FakeUri extends Mock implements Uri {}
+
 void main() {
-  PokemonRemoteDataSourceImpl dataSource;
-  MockHttpClient mockHttpClient;
+  late PokemonRemoteDataSourceImpl dataSource;
+  MockHttpClient? mockHttpClient;
 
   setUp(() {
     mockHttpClient = MockHttpClient();
     dataSource = PokemonRemoteDataSourceImpl(client: mockHttpClient);
+    registerFallbackValue(FakeUri());
   });
 
   void setUpMockHttpClientSuccess200() {
-    when(mockHttpClient.get(any, headers: anyNamed('headers')))
+    when(() => mockHttpClient!.get(any(), headers: any(named: 'headers')))
         .thenAnswer((_) async => http.Response(fixture('pokemon.json'), 200));
   }
 
   void setUpMockHttpClientFailure404() {
-    when(mockHttpClient.get(any, headers: anyNamed('headers')))
+    when(() => mockHttpClient!.get(any(), headers: any(named: 'headers')))
         .thenAnswer((_) async => http.Response('Something went wrong', 404));
   }
 
@@ -41,11 +44,14 @@ void main() {
       //arrange
       setUpMockHttpClientSuccess200();
       //act
-      dataSource.getPokemon(tPokemonName);
+      await dataSource.getPokemon(tPokemonName);
       //assert
-      verify(mockHttpClient.get(
-          'https://pokeapi.co/api/v2/pokemon/$tPokemonName',
-          headers: {'content-type': 'application/json'}));
+      verify(
+        () => mockHttpClient!.get(
+          Uri.parse('https://pokeapi.co/api/v2/pokemon/$tPokemonName'),
+          headers: {'content-type': 'application/json'},
+        ),
+      );
     });
 
     test('should return a Pokemon when the response code is 200 (success)',
@@ -83,8 +89,12 @@ void main() {
       //act
       dataSource.getPokemonById(tPokemonId);
       //assert
-      verify(mockHttpClient.get('https://pokeapi.co/api/v2/pokemon/$tPokemonId',
-          headers: {'content-type': 'application/json'}));
+      verify(
+        () => mockHttpClient!.get(
+          Uri.parse('https://pokeapi.co/api/v2/pokemon/$tPokemonId'),
+          headers: {'content-type': 'application/json'},
+        ),
+      );
     });
 
     test('should return a Pokemon when the response code is 200 (success)',

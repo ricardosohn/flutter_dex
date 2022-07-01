@@ -1,19 +1,17 @@
-import 'package:meta/meta.dart';
-
 import '../../domain/entities/pokemon.dart';
 
 class PokemonModel extends Pokemon {
   PokemonModel(
-      {@required List abilities,
-      @required int baseExperience,
-      @required double height,
-      @required int id,
-      @required String name,
-      @required int order,
-      @required Map<String, dynamic> sprites,
-      @required List stats,
-      @required List types,
-      @required double weight})
+      {required List abilities,
+      required int baseExperience,
+      required double height,
+      required int id,
+      required String name,
+      required int order,
+      required Map<String, dynamic> sprites,
+      required List stats,
+      required List types,
+      required double weight})
       : super(
             abilities: abilities,
             baseExperience: baseExperience,

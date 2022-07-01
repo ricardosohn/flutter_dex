@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:meta/meta.dart';
 
 import '../../../../core/error/exceptions.dart';
 import '../models/pokemon_model.dart';
@@ -19,9 +18,9 @@ abstract class PokemonRemoteDataSource {
 }
 
 class PokemonRemoteDataSourceImpl implements PokemonRemoteDataSource {
-  final http.Client client;
+  final http.Client? client;
 
-  PokemonRemoteDataSourceImpl({@required this.client});
+  PokemonRemoteDataSourceImpl({required this.client});
 
   @override
   Future<PokemonModel> getPokemon(String name) =>
@@ -32,8 +31,8 @@ class PokemonRemoteDataSourceImpl implements PokemonRemoteDataSource {
       _getPokemonFromUrl('https://pokeapi.co/api/v2/pokemon/$id');
 
   Future<PokemonModel> _getPokemonFromUrl(url) async {
-    final response =
-        await client.get(url, headers: {'content-type': 'application/json'});
+    final response = await client!
+        .get(Uri.parse(url), headers: {'content-type': 'application/json'});
 
     if (response.statusCode == 200) {
       return PokemonModel.fromJson(json.decode(response.body));

@@ -1,12 +1,9 @@
-import 'dart:async';
-
 import 'package:FlutterDex/core/error/failures.dart';
 import 'package:FlutterDex/core/usecases/usecase.dart';
 import 'package:FlutterDex/core/util/input_converter.dart';
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
 
 import '../../domain/entities/pokemon.dart';
 import '../../domain/usecases/get_pokemon.dart';
@@ -25,52 +22,39 @@ class PokedexBloc extends Bloc<PokedexEvent, PokedexState> {
   final GetRandomPokemon getRandomPokemon;
   final InputConverter inputConverter;
 
-  PokedexBloc(
-      {@required GetPokemon getPokemon,
-      @required GetRandomPokemon getRandomPokemon,
-      @required InputConverter inputConverter})
-      : assert(getPokemon != null),
-        assert(getRandomPokemon != null),
-        assert(inputConverter != null),
-        getPokemon = getPokemon,
+  PokedexBloc({
+    required GetPokemon getPokemon,
+    required GetRandomPokemon getRandomPokemon,
+    required InputConverter inputConverter,
+  })  : getPokemon = getPokemon,
         getRandomPokemon = getRandomPokemon,
         inputConverter = inputConverter,
-        super(Empty());
+        super(Empty()) {
+    on<GetPokemonEvent>((event, emit) async {
+      final inputEither = inputConverter.validateString(event.name!);
+      if (inputEither.isRight()) {
+        emit(Loading());
+        final pokemonName = inputEither.getOrElse(() => "");
+        final either = await getPokemon(Params(pokemonName: pokemonName));
+        emit(_eitherLoadedOrErrorState(either));
+      } else {
+        emit(Error(message: INVALID_INPUT_FAILURE_MESSAGE));
+      }
+    });
 
-  @override
-  Stream<PokedexState> mapEventToState(
-    PokedexEvent event,
-  ) async* {
-    if (event is GetPokemonEvent) {
-      yield* _handleGetPokemonEvent(event);
-    } else if (event is GetRandomPokemonEvent) {
-      yield* _handleGetRandomPokemonEvent(event);
-    }
-  }
-
-  Stream<PokedexState> _handleGetPokemonEvent(event) async* {
-    final inputEither = inputConverter.validateString(event.name);
-    yield* inputEither.fold((failure) async* {
-      yield Error(message: INVALID_INPUT_FAILURE_MESSAGE);
-    }, (pokemonName) async* {
-      yield Loading();
-      final failureOrPokemon =
-          await getPokemon(Params(pokemonName: pokemonName));
-      yield* _eitherLoadedOrErrorState(failureOrPokemon);
+    on<GetRandomPokemonEvent>((event, emit) async {
+      emit(Loading());
+      final either = await getRandomPokemon(NoParams());
+      emit(_eitherLoadedOrErrorState(either));
     });
   }
 
-  Stream<PokedexState> _handleGetRandomPokemonEvent(event) async* {
-    yield Loading();
-    final failureOrPokemon = await getRandomPokemon(NoParams());
-    yield* _eitherLoadedOrErrorState(failureOrPokemon);
-  }
-
-  Stream<PokedexState> _eitherLoadedOrErrorState(
-      Either<Failure, Pokemon> failureOrPokemon) async* {
-    yield failureOrPokemon.fold(
-        (failure) => Error(message: _mapFailureToMessage(failure)),
-        (pokemon) => Loaded(pokemon: pokemon));
+  PokedexState _eitherLoadedOrErrorState(
+      Either<Failure, Pokemon> failureOrPokemon) {
+    return failureOrPokemon.fold(
+      (failure) => Error(message: _mapFailureToMessage(failure)),
+      (pokemon) => Loaded(pokemon: pokemon),
+    );
   }
 
   String _mapFailureToMessage(Failure failure) {

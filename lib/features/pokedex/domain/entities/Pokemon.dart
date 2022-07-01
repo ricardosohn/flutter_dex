@@ -14,16 +14,16 @@ class Pokemon extends Equatable {
   final double weight;
 
   Pokemon(
-      {@required this.abilities,
-      @required this.baseExperience,
-      @required this.height,
-      @required this.id,
-      @required this.name,
-      @required this.order,
-      @required this.sprites,
-      @required this.stats,
-      @required this.types,
-      @required this.weight});
+      {required this.abilities,
+      required this.baseExperience,
+      required this.height,
+      required this.id,
+      required this.name,
+      required this.order,
+      required this.sprites,
+      required this.stats,
+      required this.types,
+      required this.weight});
 
   @override
   List<Object> get props => [

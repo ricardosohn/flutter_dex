@@ -8,7 +8,7 @@ abstract class PokedexEvent extends Equatable {
 }
 
 class GetPokemonEvent extends PokedexEvent {
-  final String name;
+  final String? name;
 
   GetPokemonEvent(this.name) : super([name]);
 }

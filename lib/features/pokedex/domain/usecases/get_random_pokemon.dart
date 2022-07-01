@@ -6,12 +6,12 @@ import '../entities/pokemon.dart';
 import '../repositories/pokemon_repository.dart';
 
 class GetRandomPokemon implements Usecase<Pokemon, NoParams> {
-  final PokemonRepository repository;
+  final PokemonRepository? repository;
 
   GetRandomPokemon(this.repository);
 
   @override
   Future<Either<Failure, Pokemon>> call(NoParams params) async {
-    return await repository.getRandomPokemon();
+    return await repository!.getRandomPokemon();
   }
 }

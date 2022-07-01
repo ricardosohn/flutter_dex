@@ -1,16 +1,17 @@
+import 'package:FlutterDex/core/error/failures.dart';
 import 'package:FlutterDex/core/usecases/usecase.dart';
 import 'package:FlutterDex/features/pokedex/domain/entities/pokemon.dart';
 import 'package:FlutterDex/features/pokedex/domain/repositories/pokemon_repository.dart';
 import 'package:FlutterDex/features/pokedex/domain/usecases/get_random_pokemon.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 
 class MockPokemonRepository extends Mock implements PokemonRepository {}
 
 void main() {
-  GetRandomPokemon usecase;
-  MockPokemonRepository mockPokemonRepository;
+  late GetRandomPokemon usecase;
+  MockPokemonRepository? mockPokemonRepository;
 
   setUp(() {
     mockPokemonRepository = MockPokemonRepository();
@@ -31,13 +32,13 @@ void main() {
 
   test('should get pokemon data from the repository', () async {
     //arrange
-    when(mockPokemonRepository.getRandomPokemon())
+    when(() => mockPokemonRepository!.getRandomPokemon())
         .thenAnswer((_) async => Right(pData));
     //act
-    final result = await usecase(NoParams());
+    final Either<Failure, Pokemon>? result = await usecase(NoParams());
     //assert
     expect(result, Right(pData));
-    verify(mockPokemonRepository.getRandomPokemon());
+    verify(() => mockPokemonRepository!.getRandomPokemon());
     verifyNoMoreInteractions(mockPokemonRepository);
   });
 }

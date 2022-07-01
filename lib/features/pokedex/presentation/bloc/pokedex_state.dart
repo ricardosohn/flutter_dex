@@ -14,7 +14,7 @@ class Loading extends PokedexState {}
 class Loaded extends PokedexState {
   final Pokemon pokemon;
 
-  Loaded({@required this.pokemon});
+  Loaded({required this.pokemon});
 
   @override
   List<Object> get props => [pokemon];
@@ -23,7 +23,7 @@ class Loaded extends PokedexState {
 class Error extends PokedexState {
   final String message;
 
-  Error({@required this.message});
+  Error({required this.message});
 
   @override
   List<Object> get props => [message];

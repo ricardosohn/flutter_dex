@@ -1,7 +1,7 @@
 import 'dart:math';
 
+import 'package:FlutterDex/features/pokedex/data/models/pokemon_model.dart';
 import 'package:dartz/dartz.dart';
-import 'package:meta/meta.dart';
 
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
@@ -15,45 +15,45 @@ typedef Future<Pokemon> _WithParamOrRandomChooser();
 const LAST_POKEMON_ID = 898;
 
 class PokemonRepositoryImpl implements PokemonRepository {
-  final PokemonRemoteDataSource remoteDataSource;
-  final PokemonLocalDataSource localDataSource;
-  final Random random;
-  final NetworkInfo networkInfo;
+  final PokemonRemoteDataSource? remoteDataSource;
+  final PokemonLocalDataSource? localDataSource;
+  final Random? random;
+  final NetworkInfo? networkInfo;
 
   PokemonRepositoryImpl(
-      {@required this.remoteDataSource,
-      @required this.localDataSource,
-      @required this.random,
-      @required this.networkInfo});
+      {required this.remoteDataSource,
+      required this.localDataSource,
+      required this.random,
+      required this.networkInfo});
 
   @override
   Future<Either<Failure, Pokemon>> getPokemon(String name) async {
     return await _getPokemon(() {
-      return remoteDataSource.getPokemon(name);
+      return remoteDataSource!.getPokemon(name);
     });
   }
 
   @override
   Future<Either<Failure, Pokemon>> getRandomPokemon() async {
-    int randomId = random.nextInt(LAST_POKEMON_ID) + 1;
+    int randomId = random!.nextInt(LAST_POKEMON_ID) + 1;
     return await _getPokemon(() {
-      return remoteDataSource.getPokemonById(randomId);
+      return remoteDataSource!.getPokemonById(randomId);
     });
   }
 
   Future<Either<Failure, Pokemon>> _getPokemon(
       _WithParamOrRandomChooser getWithParamOrRandom) async {
-    if (await networkInfo.isConnected) {
+    if (await networkInfo!.isConnected) {
       try {
         final remotePokemon = await getWithParamOrRandom();
-        localDataSource.cachePokemon(remotePokemon);
+        await localDataSource!.cachePokemon(remotePokemon as PokemonModel);
         return Right(remotePokemon);
       } on ServerException {
         return Left(ServerFailure());
       }
     } else {
       try {
-        final localPokemon = await localDataSource.getLastPokemon();
+        final localPokemon = await localDataSource!.getLastPokemon();
         return Right(localPokemon);
       } on CacheException {
         return Left(CacheFailure());

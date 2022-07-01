@@ -8,20 +8,20 @@ import '../entities/pokemon.dart';
 import '../repositories/pokemon_repository.dart';
 
 class GetPokemon implements Usecase<Pokemon, Params> {
-  final PokemonRepository repository;
+  final PokemonRepository? repository;
 
   GetPokemon(this.repository);
 
   @override
   Future<Either<Failure, Pokemon>> call(Params params) async {
-    return await repository.getPokemon(params.pokemonName);
+    return await repository!.getPokemon(params.pokemonName);
   }
 }
 
 class Params extends Equatable {
   final String pokemonName;
 
-  Params({@required this.pokemonName});
+  Params({required this.pokemonName});
 
   @override
   List<Object> get props => [pokemonName];
