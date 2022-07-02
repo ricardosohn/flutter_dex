@@ -1,7 +1,7 @@
-import 'package:FlutterDex/features/pokedex/domain/entities/pokemon.dart';
-import 'package:FlutterDex/features/pokedex/presentation/bloc/pokedex_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dex/features/pokedex/domain/entities/pokemon.dart';
+import 'package:flutter_dex/features/pokedex/presentation/bloc/pokedex_bloc.dart';
 import 'package:get_it/get_it.dart';
 
 class PokedexPage extends StatelessWidget {
@@ -72,17 +72,15 @@ class PokedexControlState extends State<PokedexControl> {
         Row(
           children: [
             Expanded(
-              child: RaisedButton(
+              child: ElevatedButton(
                 child: Text("Search"),
-                color: Colors.green[600],
                 onPressed: () => dispatchGetPokemon(context),
               ),
             ),
             SizedBox(width: 10),
             Expanded(
-              child: RaisedButton(
+              child: ElevatedButton(
                 child: Text("Random"),
-                color: Colors.yellow[600],
                 onPressed: () => dispatchGetRandomPokemon(context),
               ),
             )

@@ -1,9 +1,9 @@
-import 'package:FlutterDex/core/error/failures.dart';
-import 'package:FlutterDex/core/usecases/usecase.dart';
-import 'package:FlutterDex/core/util/input_converter.dart';
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_dex/core/error/failures.dart';
+import 'package:flutter_dex/core/usecases/usecase.dart';
+import 'package:flutter_dex/core/util/input_converter.dart';
 
 import '../../domain/entities/pokemon.dart';
 import '../../domain/usecases/get_pokemon.dart';

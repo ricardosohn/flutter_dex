@@ -1,14 +1,14 @@
 import 'dart:math';
 
-import 'package:FlutterDex/core/error/exceptions.dart';
-import 'package:FlutterDex/core/error/failures.dart';
-import 'package:FlutterDex/core/network/network_info.dart';
-import 'package:FlutterDex/features/pokedex/data/datasources/pokemon_local_data_source.dart';
-import 'package:FlutterDex/features/pokedex/data/datasources/pokemon_remote_data_source.dart';
-import 'package:FlutterDex/features/pokedex/data/models/pokemon_model.dart';
-import 'package:FlutterDex/features/pokedex/data/repositories/pokemon_repository_impl.dart';
-import 'package:FlutterDex/features/pokedex/domain/entities/pokemon.dart';
 import 'package:dartz/dartz.dart';
+import 'package:flutter_dex/core/error/exceptions.dart';
+import 'package:flutter_dex/core/error/failures.dart';
+import 'package:flutter_dex/core/network/network_info.dart';
+import 'package:flutter_dex/features/pokedex/data/datasources/pokemon_local_data_source.dart';
+import 'package:flutter_dex/features/pokedex/data/datasources/pokemon_remote_data_source.dart';
+import 'package:flutter_dex/features/pokedex/data/models/pokemon_model.dart';
+import 'package:flutter_dex/features/pokedex/data/repositories/pokemon_repository_impl.dart';
+import 'package:flutter_dex/features/pokedex/domain/entities/pokemon.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 

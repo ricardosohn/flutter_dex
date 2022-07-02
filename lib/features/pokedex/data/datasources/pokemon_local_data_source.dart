@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:meta/meta.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/error/exceptions.dart';
@@ -35,7 +34,7 @@ class PokemonLocalDataSourceImpl implements PokemonLocalDataSource {
 
   @override
   Future<void> cachePokemon(PokemonModel pokemonModel) {
-    return sharedPreferences!.setString(
-        CACHED_POKEMON, json.encode(pokemonModel.toJson()));
+    return sharedPreferences!
+        .setString(CACHED_POKEMON, json.encode(pokemonModel.toJson()));
   }
 }

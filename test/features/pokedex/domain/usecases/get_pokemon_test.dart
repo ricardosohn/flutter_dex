@@ -1,8 +1,8 @@
-import 'package:FlutterDex/core/error/failures.dart';
-import 'package:FlutterDex/features/pokedex/domain/entities/pokemon.dart';
-import 'package:FlutterDex/features/pokedex/domain/repositories/pokemon_repository.dart';
-import 'package:FlutterDex/features/pokedex/domain/usecases/get_pokemon.dart';
 import 'package:dartz/dartz.dart';
+import 'package:flutter_dex/core/error/failures.dart';
+import 'package:flutter_dex/features/pokedex/domain/entities/pokemon.dart';
+import 'package:flutter_dex/features/pokedex/domain/repositories/pokemon_repository.dart';
+import 'package:flutter_dex/features/pokedex/domain/usecases/get_pokemon.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 

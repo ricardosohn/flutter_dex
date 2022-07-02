@@ -1,7 +1,8 @@
-import 'package:FlutterDex/features/pokedex/data/models/pokemon_model.dart';
-import 'package:FlutterDex/features/pokedex/domain/entities/pokemon.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'dart:convert';
+
+import 'package:flutter_dex/features/pokedex/data/models/pokemon_model.dart';
+import 'package:flutter_dex/features/pokedex/domain/entities/pokemon.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 import '../../../../../test/core/fixtures/fixtures_reader.dart';
 

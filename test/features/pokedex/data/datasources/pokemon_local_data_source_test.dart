@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:FlutterDex/core/error/exceptions.dart';
-import 'package:FlutterDex/features/pokedex/data/datasources/pokemon_local_data_source.dart';
-import 'package:FlutterDex/features/pokedex/data/models/pokemon_model.dart';
+import 'package:flutter_dex/core/error/exceptions.dart';
+import 'package:flutter_dex/features/pokedex/data/datasources/pokemon_local_data_source.dart';
+import 'package:flutter_dex/features/pokedex/data/models/pokemon_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:shared_preferences/shared_preferences.dart';

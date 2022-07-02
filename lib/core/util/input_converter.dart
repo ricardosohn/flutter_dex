@@ -1,5 +1,5 @@
-import 'package:FlutterDex/core/error/failures.dart';
 import 'package:dartz/dartz.dart';
+import 'package:flutter_dex/core/error/failures.dart';
 
 class InputConverter {
   Either<Failure, String> validateString(String str) {

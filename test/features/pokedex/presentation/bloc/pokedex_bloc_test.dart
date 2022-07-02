@@ -1,12 +1,12 @@
-import 'package:FlutterDex/core/error/failures.dart';
-import 'package:FlutterDex/core/usecases/usecase.dart';
-import 'package:FlutterDex/core/util/input_converter.dart';
-import 'package:FlutterDex/features/pokedex/domain/entities/pokemon.dart';
-import 'package:FlutterDex/features/pokedex/domain/usecases/get_pokemon.dart';
-import 'package:FlutterDex/features/pokedex/domain/usecases/get_random_pokemon.dart';
-import 'package:FlutterDex/features/pokedex/presentation/bloc/pokedex_bloc.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:dartz/dartz.dart';
+import 'package:flutter_dex/core/error/failures.dart';
+import 'package:flutter_dex/core/usecases/usecase.dart';
+import 'package:flutter_dex/core/util/input_converter.dart';
+import 'package:flutter_dex/features/pokedex/domain/entities/pokemon.dart';
+import 'package:flutter_dex/features/pokedex/domain/usecases/get_pokemon.dart';
+import 'package:flutter_dex/features/pokedex/domain/usecases/get_random_pokemon.dart';
+import 'package:flutter_dex/features/pokedex/presentation/bloc/pokedex_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
